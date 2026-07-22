@@ -28,6 +28,11 @@ export const signInWithGoogle = async () => {
     return result.user;
   } catch (error) {
     console.error("Error signing in with Google", error);
+    if (error.code === 'auth/unauthorized-domain') {
+      alert("Lỗi đăng nhập: Tên miền của web (" + window.location.hostname + ") chưa được thêm vào Authorized Domains trên Firebase Console.");
+    } else if (error.code !== 'auth/popup-closed-by-user') {
+      alert("Lỗi đăng nhập Google: " + (error.message || error.code));
+    }
     throw error;
   }
 };
