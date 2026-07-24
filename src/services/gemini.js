@@ -64,7 +64,7 @@ Output: a highly detailed 3D microscopic view of a plant cell, educational scien
 const PREFERRED_MODELS = [
   "gemini-1.5-flash",
   "gemini-2.0-flash",
-  "gemini-1.5-pro"
+  "gemini-1.5-flash-8b"
 ];
 
 function cleanGeneratedPrompt(rawText) {
