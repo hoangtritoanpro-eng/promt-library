@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
 const SYSTEM_PROMPT = `Bạn là một Kỹ sư Prompt (Prompt Engineer) đỉnh cao và Cố vấn Giáo dục hàng đầu.
 Nhiệm vụ của bạn là lấy một yêu cầu sơ khai (User Input) và phát triển thành một CÂU LỆNH PROMPT NÂNG CAO chuyên nghiệp, chuẩn mực và hoàn chỉnh nhất theo đúng công thức Kỹ sư Prompt 4 phần.
@@ -90,7 +90,27 @@ const callGeminiWithFallback = async (apiKey, { userPrompt, systemInstruction, g
 
   for (const modelName of PREFERRED_MODELS) {
     try {
-      const modelParams = { model: modelName };
+      const modelParams = { 
+        model: modelName,
+        safetySettings: [
+          {
+            category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+          },
+          {
+            category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+          },
+          {
+            category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+          },
+          {
+            category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+          }
+        ]
+      };
       if (systemInstruction) {
         modelParams.systemInstruction = systemInstruction;
       }
