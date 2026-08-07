@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { generateProfessionalPrompt } from '../services/gemini';
 
 const PromptGenerator = ({ onClose }) => {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
   const [request, setRequest] = useState('');
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [loading, setLoading] = useState(false);
@@ -10,24 +10,27 @@ const PromptGenerator = ({ onClose }) => {
   const [copied, setCopied] = useState(false);
 
   const handleGenerate = async () => {
-    if (!apiKey) {
+    if (!apiKey.trim()) {
       setError("Vui lòng nhập API Key của Gemini.");
       return;
     }
-    if (!request) {
+    if (!request.trim()) {
       setError("Vui lòng nhập yêu cầu của bạn.");
       return;
     }
+
+    // Lưu Gemini API Key vào LocalStorage
+    localStorage.setItem('gemini_api_key', apiKey.trim());
 
     setLoading(true);
     setError('');
     setGeneratedPrompt('');
 
     try {
-      const prompt = await generateProfessionalPrompt(apiKey, request);
+      const prompt = await generateProfessionalPrompt(apiKey.trim(), request);
       setGeneratedPrompt(prompt);
       
-      // Lưu vào LocalStorage
+      // Lưu vào LocalStorage history
       const history = JSON.parse(localStorage.getItem('ai_prompts_history') || '[]');
       const newEntry = {
         id: Date.now(),
@@ -38,7 +41,7 @@ const PromptGenerator = ({ onClose }) => {
       localStorage.setItem('ai_prompts_history', JSON.stringify([newEntry, ...history]));
 
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Không thể tạo prompt. Vui lòng kiểm tra lại Gemini API Key.");
     } finally {
       setLoading(false);
     }
@@ -68,7 +71,10 @@ const PromptGenerator = ({ onClose }) => {
               className="form-input" 
               placeholder="Nhập API Key của bạn..."
               value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
+              onChange={(e) => {
+                setApiKey(e.target.value);
+                localStorage.setItem('gemini_api_key', e.target.value);
+              }}
             />
             <small style={{ color: 'var(--text-secondary)', marginTop: '4px', display: 'block' }}>
               *Key của bạn chỉ lưu tạm trên trình duyệt và không được gửi đi đâu khác.
@@ -108,6 +114,7 @@ const PromptGenerator = ({ onClose }) => {
                 className="form-input form-textarea result-textarea" 
                 readOnly 
                 value={generatedPrompt}
+                style={{ minHeight: '220px', lineHeight: '1.6' }}
               ></textarea>
             </div>
           )}
