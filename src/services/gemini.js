@@ -62,6 +62,7 @@ Input: Vẽ tế bào thực vật
 Output: a highly detailed 3D microscopic view of a plant cell, educational scientific illustration, showing nucleus, chloroplasts, mitochondria, glowing organelles, neon accents, cinematic lighting, 8k resolution, unreal engine 5 render, masterpiece, photorealistic`;
 
 const PREFERRED_MODELS = [
+  "gemini-3.5-flash",
   "gemini-3.6-flash",
   "gemini-2.0-flash",
   "gemini-1.5-flash"
